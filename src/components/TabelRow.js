@@ -27,7 +27,6 @@ class TableRow extends Component {
     var index = evt.target.name;
     var index_ls = evt.target.id;
     console.log(this.state.results[index]);
-    console.log(this.props.dataFromChild);
     this.props.dataFromChild(this.state.results[index]);
   }
   handleRefresh = (evt) => {
