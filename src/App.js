@@ -5,57 +5,26 @@ import Table from "./components/Table.js";
 var obj1 = [{}];
 var obj5 = [{}];
 
-function validate(
-  name,
-  age,
-  nominee,
-  relation,
-  course,
-  weeks,
-  s1,
-  s2,
-  s3,
-  s4,
-  s5,
-  s6,
-  s7,
-  s8
-) {
+function validate(name,age,nominee,relation,course,weeks,s1,s2,s3,s4,s5,s6,s7,s8) {
   return {
     name: name.length === 0 || !/^[A-Za-z\s]+$/.test(name),
-    age: age.length === 0 || !/^[0-9]+$/.test(age) || age > 30,
-    nominee: nominee.length === 0 && age <= 18,
-    relation: relation === "" && age <= 18,
-    course: course === "",
-    weeks: weeks === "",
-    s1: s1 === "",
-    s2: s2 === "",
-    s3: s3 === "",
-    s4: s4 === "",
-    s5: s5 === "",
-    s6: s6 === "",
-    s7: s7 === "" && weeks === 8,
-    s8: s8 === "" && weeks === 8
+    age: age.length === 0 || !/^[0-9]+$/.test(age)||age>30,
+    nominee:nominee.length ===0 && age <= 18,
+    relation:relation === '' && age <=18,
+    course:course === '',
+    weeks:weeks ==='',
+    s1:s1 ==='',
+    s2:s2 ==='',
+    s3:s3 ==='',
+    s4:s4 ==='',
+    s5:s5 ==='',
+    s6:s6 ==='',
+    s7:s7 ==='' && weeks === 8,
+    s8:s8 ==='' && weeks === 8,
   };
 }
 
-function move(
-  name,
-  age,
-  nominee,
-  relation,
-  course,
-  weeks,
-  s1,
-  s2,
-  s3,
-  s4,
-  s5,
-  s6,
-  s7,
-  s8,
-  i
-) {
+function move(name,age,nominee,relation,course,weeks,s1,s2,s3,s4,s5,s6,s7,s8,i) {
   var nom, rel, s7n, s8n;
   nom = nominee;
   rel = relation;
@@ -124,7 +93,8 @@ class App extends Component {
         s5: false,
         s6: false,
         s7: false,
-        s8: false
+        s8: false,
+        subjects:[]
       }
     };
   }
@@ -177,85 +147,68 @@ class App extends Component {
     }
   };
 
+  shouldMarkError = (field) => {
+    const { name,age,nominee,relation,course,weeks,s1,s2,s3,s4,s5,s6,s7,s8 } = this.state
+    const errors = validate( name,age,nominee,relation,course,weeks,s1,s2,s3,s4,s5,s6,s7,s8);
+    const hasError = errors[field];
+    const shouldShow = this.state.touched[field];
+    return hasError ? shouldShow : false;
+  };
+
+  renderInputField = (field,type) => 
+    <input
+      className={this.shouldMarkError(`${field}`) ? "error" : ""}
+      type={`${type}`}
+      placeholder={`Enter ${field}`}
+      value={this.state[field]}
+      onChange={this.handleChange}
+      onBlur={this.handleBlur(`${field}`)}
+      name={`${field}`}
+    />
+   renderSubjectFields = () => {
+      const { weeks } = this.state;
+      let arr = []
+      for(var i=0; i<weeks; i++){
+        arr[i] = `s${i+1}`
+      }
+      return arr.map((s,i)=>
+            <div key={i}>
+              {this.renderInputField(s,"text")}
+              <br/>
+            </div>
+            )
+      }
+
   render() {
     const { name,age,nominee,relation,course,weeks,s1,s2,s3,s4,s5,s6,s7,s8 } = this.state
-    const errors = validate(
-      name,
-      age,
-      nominee,
-      relation,
-      course,
-      weeks,
-      s1,
-      s2,
-      s3,
-      s4,
-      s5,
-      s6,
-      s7,
-      s8
-    );
+    const errors = validate( name,age,nominee,relation,course,weeks,s1,s2,s3,s4,s5,s6,s7,s8)
     const isDisabled = Object.keys(errors).some(x => errors[x]);
-    const checkAge =  age === "" || age > 18 || !/^[0-9]+$/.test(age);
-    const val = parseInt(weeks);
-    const weeeks = val === 8;
-    const weaks = val === 6;
-
-    const shouldMarkError = field => {
-      const hasError = errors[field];
-      const shouldShow = this.state.touched[field];
-      var i = 0;
-      return hasError ? shouldShow : false;
-    };
-
+    const checkAge =  age != "" && age < 18;
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
-          <input
-            className={shouldMarkError("name") ? "error" : ""}
-            type="text"
-            placeholder="Enter Name"
-            value={this.state.name}
-            onChange={this.handleChange}
-            onBlur={this.handleBlur("name")}
-            name="name"
-          />
-          <input
-            className={shouldMarkError("age") ? "error" : ""}
-            type="age"
-            placeholder="Enter Age"
-            value={this.state.age}
-            onChange={this.handleChange}
-            onBlur={this.handleBlur("age")}
-            name="age"
-          />
-          <div className={checkAge ? "hidden" : ""}>
-            <input
-              className={shouldMarkError("nominee") ? "error" : ""}
-              type="name"
-              placeholder="Enter Nominee"
-              value={this.state.nominee}
-              onChange={this.handleChange}
-              onBlur={this.handleBlur("nominee")}
-              name="nominee"
-            />
-            <select
-              className={shouldMarkError("relation") ? "error" : ""}
-              value={this.state.relation}
-              name="relation"
-              onChange={this.handleChange}
-              onBlur={this.handleBlur("relation")}
-            >
-              <option value="">Choose Relation</option>
-              <option value="Father">Father</option>
-              <option value="Mother">Mother</option>
-              <option value="Guardian">Guardian</option>
-            </select>
-          </div>
+          {this.renderInputField('name','text')}
+          {this.renderInputField('age','text')}
+          {
+            checkAge  &&  <div>
+             {this.renderInputField('nominee','text')}
+              <select
+                className={this.shouldMarkError("relation") ? "error" : ""}
+                value={this.state.relation}
+                name="relation"
+                onChange={this.handleChange}
+                onBlur={this.handleBlur("relation")}
+              >
+                <option value="">Choose Relation</option>
+                <option value="Father">Father</option>
+                <option value="Mother">Mother</option>
+                <option value="Guardian">Guardian</option>
+              </select>
+            </div>
+          }
           <br />
-
           <select
-            className={shouldMarkError("course") ? "error" : ""}
+            className={this.shouldMarkError("course") ? "error" : ""}
             value={this.state.course}
             name="course"
             onChange={this.handleChange}
@@ -272,7 +225,7 @@ class App extends Component {
           <br />
 
           <select
-            className={shouldMarkError("weeks") ? "error" : ""}
+            className={this.shouldMarkError("weeks") ? "error" : ""}
             value={this.state.weeks}
             name="weeks"
             onChange={this.handleChange}
@@ -284,152 +237,7 @@ class App extends Component {
           </select>
           <br />
           <br />
-
-          <div className={weaks ? "" : "hidden"}>
-            <input
-              className={shouldMarkError("s1") ? "error" : ""}
-              type={"text"}
-              name={"s1"}
-              value={this.state.s1}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 1"}
-              onBlur={this.handleBlur("s1")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s2") ? "error" : ""}
-              type={"text"}
-              name={"s2"}
-              value={this.state.s2}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 2"}
-              onBlur={this.handleBlur("s2")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s3") ? "error" : ""}
-              type={"text"}
-              name={"s3"}
-              value={this.state.s3}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 3"}
-              onBlur={this.handleBlur("s3")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s4") ? "error" : ""}
-              type={"text"}
-              name={"s4"}
-              value={this.state.s4}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 4"}
-              onBlur={this.handleBlur("s4")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s5") ? "error" : ""}
-              type={"text"}
-              name={"s5"}
-              value={this.state.s5}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 5"}
-              onBlur={this.handleBlur("s5")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s6") ? "error" : ""}
-              type={"text"}
-              name={"s6"}
-              value={this.state.s6}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 6"}
-              onBlur={this.handleBlur("s6")}
-            />
-            <br />
-          </div>
-          <div className={weeeks ? "" : "hidden"}>
-            <input
-              className={shouldMarkError("s1") ? "error" : ""}
-              type={"text"}
-              name={"s1"}
-              value={this.state.s1}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 1"}
-              onBlur={this.handleBlur("s1")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s2") ? "error" : ""}
-              type={"text"}
-              name={"s2"}
-              value={this.state.s2}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 2"}
-              onBlur={this.handleBlur("s2")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s3") ? "error" : ""}
-              type={"text"}
-              name={"s3"}
-              value={this.state.s3}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 3"}
-              onBlur={this.handleBlur("s3")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s4") ? "error" : ""}
-              type={"text"}
-              name={"s4"}
-              value={this.state.s4}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 4"}
-              onBlur={this.handleBlur("s4")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s5") ? "error" : ""}
-              type={"text"}
-              name={"s5"}
-              value={this.state.s5}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 5"}
-              onBlur={this.handleBlur("s5")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s6") ? "error" : ""}
-              type={"text"}
-              name={"s6"}
-              value={this.state.s6}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 6"}
-              onBlur={this.handleBlur("s6")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s7") ? "error" : ""}
-              type={"text"}
-              name={"s7"}
-              value={this.state.s7}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 7"}
-              onBlur={this.handleBlur("s7")}
-            />
-            <br />
-            <input
-              className={shouldMarkError("s8") ? "error" : ""}
-              type={"text"}
-              name={"s8"}
-              value={this.state.s8}
-              onChange={this.handleChange}
-              placeholder={"Enter Subject 8"}
-              onBlur={this.handleBlur("s8")}
-            />
-            <br />
-          </div>
-
+          {this.renderSubjectFields()}
           <button disabled={isDisabled}>Sign up</button>
         </form>
 

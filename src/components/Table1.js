@@ -1,16 +1,8 @@
 import React, { Component } from 'react';
-import {BootstrapTable, 
-       TableHeaderColumn} from 'react-bootstrap-table';
+import {BootstrapTable,TableHeaderColumn} from 'react-bootstrap-table';
 
 import '../../node_modules/react-bootstrap-table/css/react-bootstrap-table.css'
- 
-// function onSelectRow(row, isSelected, e) {
-//   if (isSelected) {
-//     alert(`You just selected '${row['name']}'`)
-//   }
-// } 
-
-function onDeleteRow(rowKeys) {
+ function onDeleteRow(rowKeys) {
   alert('You deleted: ' + rowKeys)
 }
 const selectRowProp = {
